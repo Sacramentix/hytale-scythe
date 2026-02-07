@@ -1,5 +1,11 @@
 rootProject.name = "dev.hytalemodding"
 
+
+pluginManagement {
+    includeBuild("gradle-scaffoldit-modkit")
+}
+
+
 plugins {
     // See documentation on https://scaffoldit.dev
     id("dev.scaffoldit") version "0.2.4"
@@ -24,5 +30,5 @@ hytale {
         Group = "HytaleModding"
         Name = "ExamplePlugin"
         Main = "dev.hytalemodding.ExamplePlugin"
-    }
+    } 
 }

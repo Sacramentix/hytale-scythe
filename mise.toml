@@ -1,0 +1,4 @@
+[tools]
+gradle = "latest"
+java = "jetbrains-25.0.2-b300.57"
+maven = "latest"

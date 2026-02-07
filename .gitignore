@@ -34,7 +34,9 @@ build/
 !**/src/test/**/build/
 
 ### VS Code ###
-.vscode/
+.vscode/settings.json
+
+gradle-scaffoldit-modkit
 
 ### Mac OS ###
 .DS_Store
@@ -44,3 +46,5 @@ build/
 .kotlin
 devserver
 /.idea/
+
+bin

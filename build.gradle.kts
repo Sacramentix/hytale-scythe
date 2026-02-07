@@ -1,3 +1,9 @@
+plugins {
+    java
+    eclipse
+    idea
+}
+
 /**
  * NOTE: This is entirely optional and basics can be done in `settings.gradle.kts`
  */
@@ -8,4 +14,10 @@ repositories {
 
 dependencies {
     // Any external dependency you also want to include
+}
+
+eclipse {
+    classpath {
+        defaultOutputDir = file("bin/main")
+    }
 }
