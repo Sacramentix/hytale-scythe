@@ -1,0 +1,73 @@
+{
+  "Parent": "Scythe_Iron",
+  "TranslationProperties": {
+    "Name": "server.items.Tool_Hoe_Crude.name",
+    "Description": "server.items.Tool_Hoe.description"
+  },
+  "Categories": [
+    "Items.Tools"
+  ],
+  "Set": "Tool_Iron",
+  "Icon": "Icons/ItemsGenerated/Tool_Hoe_Thorium.png",
+  "Quality": "Common",
+  "MaxStack": 1,
+  "ItemLevel": 1,
+  "Recipe": {
+    "TimeSeconds": 1.5,
+    "Input": [
+      {
+        "ResourceTypeId": "Wood_Trunk",
+        "Quantity": 4
+      },
+      {
+        "ResourceTypeId": "Ingredient_Bar_Adamantite",
+        "Quantity": 5
+      }
+    ],
+    "BenchRequirement": [
+      {
+        "Type": "Crafting",
+        "Categories": [
+          "Farming"
+        ],
+        "Id": "Farmingbench",
+        "RequiredTierLevel": 10
+      }
+    ]
+  },
+  "Model": "Items/Tools/Hoe/Thorium.blockymodel",
+  "Texture": "Items/Tools/Hoe/Thorium_Texture.png",
+  "MaxDurability": 800,
+  "PlayerAnimationsId": "Battleaxe",
+  "IconProperties": {
+    "Scale": 0.45,
+    "Translation": [
+      28.2,
+      -25.2
+    ],
+    "Rotation": [
+      45,
+      300,
+      0
+    ]
+  },
+  "DroppedItemAnimation": "Items/Animations/Dropped/Dropped_Diagonal_Left.blockyanim",
+  "Tags": {
+    "Type": [
+      "Tool"
+    ]
+  },
+  "ItemSoundSetId": "ISS_Weapons_Wood",
+  "Utility": {
+    "Compatible": true
+  },
+  "InteractionVars": {
+    "Radial_Harvest": {
+      "Interactions": [{
+        "Type": "Radial_Harvest",
+        "Reach": 9.5
+      }]
+    }
+  }
+
+}

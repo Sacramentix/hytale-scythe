@@ -1,0 +1,119 @@
+{
+  "TranslationProperties": {
+    "Name": "server.items.Tool_Hoe_Crude.name",
+    "Description": "server.items.Tool_Hoe.description"
+  },
+  "Categories": [
+    "Items.Tools"
+  ],
+  "Set": "Tool_Iron",
+  "Icon": "Icons/ItemsGenerated/Tool_Hoe_Iron.png",
+  "Quality": "Uncommon",
+  "MaxStack": 1,
+  "ItemLevel": 1,
+  "Recipe": {
+    "TimeSeconds": 1.5,
+    "Input": [
+      {
+        "ResourceTypeId": "Wood_Trunk",
+        "Quantity": 4
+      },
+      {
+        "ResourceTypeId": "Ingredient_Bar_Iron",
+        "Quantity": 5
+      }
+    ],
+    "BenchRequirement": [
+      {
+        "Type": "Crafting",
+        "Categories": [
+          "Farming"
+        ],
+        "Id": "Farmingbench",
+        "RequiredTierLevel": 4
+      }
+    ]
+  },
+  "Interactions": {
+    "Primary": {
+      "Interactions": [
+        {
+          "Type": "Chaining",
+          "ChainingAllowance": 1.6,
+          "Next": [
+            {
+              "Type": "Simple",
+              "Effects": {
+                "ItemAnimationId": "SwingLeft"
+              },
+              "$Comment": "Prepare Delay",
+              "RunTime": 0.3,
+              "Next": {
+                "Type": "Replace",
+                "DefaultValue": {
+                  "Interactions": [
+                    {
+                      "Type": "Radial_Harvest",
+                      "Reach": 5.0
+                    }
+                  ]
+                },
+                "Var": "Radial_Harvest"
+              }
+            },
+            {
+              "Type": "Simple",
+              "Effects": {
+                "ItemAnimationId": "SwingRight"
+              },
+              "$Comment": "Prepare Delay",
+              "RunTime": 0.3,
+              "Next": {
+                "Type": "Replace",
+                "DefaultValue": {
+                  "Interactions": [
+                    {
+                      "Type": "Radial_Harvest",
+                      "Reach": 5.0
+                    }
+                  ]
+                },
+                "Var": "Radial_Harvest"
+              }
+            }
+          ]
+        }
+      ],
+      "Cooldown": {
+        "Cooldown": 1.4
+      }
+    },
+    "Secondary": "Root_Weapon_Battleaxe_Secondary_Guard"
+  },
+  "Model": "Items/Tools/Hoe/Iron.blockymodel",
+  "Texture": "Items/Tools/Hoe/Iron_Texture.png",
+  "MaxDurability": 100,
+  "PlayerAnimationsId": "Battleaxe",
+  "IconProperties": {
+    "Scale": 0.45,
+    "Translation": [
+      28.2,
+      -25.2
+    ],
+    "Rotation": [
+      45,
+      300,
+      0
+    ]
+  },
+  "DroppedItemAnimation": "Items/Animations/Dropped/Dropped_Diagonal_Left.blockyanim",
+  "Tags": {
+    "Type": [
+      "Tool"
+    ]
+  },
+  "ItemSoundSetId": "ISS_Weapons_Wood",
+  "Utility": {
+    "Compatible": true
+  }
+}
