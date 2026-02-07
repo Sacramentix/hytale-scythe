@@ -1,20 +1,20 @@
 {
     "Group": "HytaleModding",
-    "Name": "ExamplePlugin",
-    "Version": "0.0.0",
-    "Description": "Description of your plugin",
+    "Name": "Scythe",
+    "Version": "1.0.0",
+    "Description": "Scythe to harvest crop faster",
     "Authors": [
         {
-            "Name": "Your Name",
-            "Email": "your.email@example.com",
-            "Url": "https://your-website.com"
+            "Name": "Sacramentix",
+            "Email": "contact@sacramentix.fr",
+            "Url": "https://sacramentix.fr"
         }
     ],
     "Website": "https://your-plugin-website.com",
     "DisabledByDefault": false,
-    "IncludesAssetPack": false,
+    "IncludesAssetPack": true,
     "Dependencies": {},
     "OptionalDependencies": {},
     "ServerVersion": "*",
-    "Main": "dev.hytalemodding.ExamplePlugin"
+    "Main": "dev.hytalemodding.Scythe"
 }

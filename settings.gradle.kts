@@ -28,7 +28,7 @@ hytale {
 
     manifest {
         Group = "HytaleModding"
-        Name = "ExamplePlugin"
-        Main = "dev.hytalemodding.ExamplePlugin"
+        Name = "Scythe"
+        Main = "dev.hytalemodding.Scythe"
     } 
 }

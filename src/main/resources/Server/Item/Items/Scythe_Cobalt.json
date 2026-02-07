@@ -1,15 +1,14 @@
 {
   "Parent": "Scythe_Iron",
   "TranslationProperties": {
-    "Name": "server.items.Tool_Hoe_Crude.name",
-    "Description": "server.items.Tool_Hoe.description"
+    "Name": "items.Tool_Scythe_Cobalt.name",
+    "Description": "items.Tool_Scythe.description"
   },
   "Categories": [
     "Items.Tools"
   ],
   "Set": "Tool_Iron",
-  "Icon": "Icons/ItemsGenerated/Tool_Hoe_Thorium.png",
-  "Quality": "Common",
+  "Quality": "Rare",
   "MaxStack": 1,
   "ItemLevel": 1,
   "Recipe": {
@@ -35,20 +34,20 @@
       }
     ]
   },
-  "Model": "Items/Tools/Hoe/Thorium.blockymodel",
-  "Texture": "Items/Tools/Hoe/Thorium_Texture.png",
   "MaxDurability": 400,
   "PlayerAnimationsId": "Battleaxe",
+  "Model": "Items/Tools/Scythe/Cobalt.blockymodel",
+  "Texture": "Items/Tools/Scythe/Cobalt_Texture.png",
   "IconProperties": {
-    "Scale": 0.45,
-    "Translation": [
-      28.2,
-      -25.2
-    ],
+    "Scale": 0.18,
     "Rotation": [
       45,
       300,
       0
+    ],
+    "Translation": [
+      71,
+      -67
     ]
   },
   "DroppedItemAnimation": "Items/Animations/Dropped/Dropped_Diagonal_Left.blockyanim",
@@ -63,11 +62,13 @@
   },
   "InteractionVars": {
     "Radial_Harvest": {
-      "Interactions": [{
-        "Type": "Radial_Harvest",
-        "Reach": 8.0
-      }]
+      "Interactions": [
+        {
+          "Type": "Radial_Harvest",
+          "Reach": 8.0
+        }
+      ]
     }
-  }
-
+  },
+  "Icon": "Icons/ItemsGenerated/Scythe_Cobalt.png"
 }
