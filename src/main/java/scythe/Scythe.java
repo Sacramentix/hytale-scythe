@@ -1,10 +1,10 @@
-package dev.hytalemodding;
+package scythe;
 
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 
-import dev.hytalemodding.commands.TillAndSowCommand;
-import dev.hytalemodding.interactions.RadialHarvest;
+import scythe.commands.TillAndSowCommand;
+import scythe.interactions.RadialHarvest;
 
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.Interaction;

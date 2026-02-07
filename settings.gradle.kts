@@ -1,4 +1,4 @@
-rootProject.name = "dev.hytalemodding"
+rootProject.name = "scythe"
 
 
 pluginManagement {
@@ -29,6 +29,6 @@ hytale {
     manifest {
         Group = "HytaleModding"
         Name = "Scythe"
-        Main = "dev.hytalemodding.Scythe"
+        Main = "scythe.Scythe"
     } 
 }

@@ -1,4 +1,4 @@
-package dev.hytalemodding.interactions;
+package scythe.interactions;
 
 import java.util.ArrayList;
 

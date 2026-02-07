@@ -1,4 +1,4 @@
-package dev.hytalemodding.commands;
+package scythe.commands;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

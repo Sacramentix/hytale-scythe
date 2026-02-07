@@ -16,5 +16,5 @@
     "Dependencies": {},
     "OptionalDependencies": {},
     "ServerVersion": "*",
-    "Main": "dev.hytalemodding.Scythe"
+    "Main": "scythe.Scythe"
 }
