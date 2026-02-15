@@ -20,13 +20,10 @@ jobs:
           distribution: 'temurin'
 
       - name: Build with Gradle
-        working-directory: ./github-action-plugin
         run: |
           chmod +x gradlew
           ./gradlew build
-
       - name: Upload to Modtale
-        working-directory: ./github-action-plugin
         run: |
           # 1. Get Version from Tag (e.g. v1.0.5 -> 1.0.5)
           VERSION=${GITHUB_REF#refs/tags/v}
