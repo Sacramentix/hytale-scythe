@@ -54,7 +54,8 @@ fi
 
 echo "Creating release..."
 # Create the release. This triggers 'release: types: [published]' workflow.
-gh release create "$VERSION" "$JAR_PATH" \
+# Upload both the JAR and the hytaleServer.version file as assets
+gh release create "$VERSION" "$JAR_PATH" "build/generated/hytaleServer.version" \
     --title "$VERSION" \
     --notes-file release_notes.md
 
