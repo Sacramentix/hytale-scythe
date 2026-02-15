@@ -20,6 +20,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Determine Tag
+        id: get_tag
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "TAG_NAME=${{ github.event.inputs.release_tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "TAG_NAME=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
+          fi
       
       - name: Create Build Directory
         run: |
@@ -29,7 +38,7 @@ jobs:
       - name: Download Jar Asset
         uses: dsaltares/fetch-gh-release-asset@master
         with:
-          version: 'tags/${{ github.event.inputs.release_tag }}'
+          version: 'tags/${{ steps.get_tag.outputs.TAG_NAME }}'
           file: '.*\.jar'
           regex: true
           target: 'build/libs/'
@@ -38,18 +47,18 @@ jobs:
       - name: Download Hytale Version Asset
         uses: dsaltares/fetch-gh-release-asset@master
         with:
-          version: 'tags/${{ github.event.inputs.release_tag }}'
+          version: 'tags/${{ steps.get_tag.outputs.TAG_NAME }}'
           file: 'hytaleServer.version'
           target: 'build/generated/hytaleServer.version'
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload to Modtale
         run: |
-          # 1. Get Version from Input
-          VERSION_INPUT="${{ github.event.inputs.release_tag }}"
+          # 1. Get Version from Output
+          VERSION_INPUT="${{ steps.get_tag.outputs.TAG_NAME }}"
           # Clean 'v' prefix if present for versionNumber
           VERSION_NUMBER="${VERSION_INPUT#v}"
-          
+
           # Read Hytale Version from downloaded asset
           if [ -f build/generated/hytaleServer.version ]; then
             HYTALE_VERSION=$(cat build/generated/hytaleServer.version)
@@ -57,7 +66,7 @@ jobs:
             echo "Error: hytaleServer.version asset not found!"
             exit 1
           fi
-          
+
           # Extract release notes for this specific version from CHANGELOG
           # Matches lines starting with "## " followed by the version tag (with or without v)
           # then prints untill next "## " line.
