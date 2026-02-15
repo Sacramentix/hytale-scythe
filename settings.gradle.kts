@@ -2,13 +2,15 @@ rootProject.name = "scythe"
 
 
 pluginManagement {
-    includeBuild("gradle-scaffoldit-modkit")
+    if (file("gradle-scaffoldit-modkit").exists()) {
+        includeBuild("gradle-scaffoldit-modkit")
+    }
 }
 
 
 plugins {
     // See documentation on https://scaffoldit.dev
-    id("dev.scaffoldit") version "0.2.4"
+    id("dev.scaffoldit") version "0.2.+"
 }
 
 // Would you like to do a split project?

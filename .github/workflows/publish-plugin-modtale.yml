@@ -30,6 +30,8 @@ jobs:
         run: |
           # 1. Get Version from Tag (e.g. v1.0.5 -> 1.0.5)
           VERSION=${GITHUB_REF#refs/tags/v}
+          HYTALE_VERSION=$(cat build/generated/hytaleServer.version)
+          awk '/^## / { if (p) { exit }; p=1; } p' CHANGELOG.md > release_notes.md
           
           # 2. Find the built jar
           JAR_PATH=$(find build/libs -name "*-plain.jar" -prune -o -name "*.jar" -print | head -n 1)
@@ -41,5 +43,5 @@ jobs:
             -H "X-MODTALE-KEY: ${{ secrets.MODTALE_API_KEY }}" \
             -F "file=@$JAR_PATH" \
             -F "versionNumber=$VERSION" \
-            -F "gameVersions=2026.01.17-4b0f30090" \
-            -F "changelog=Automated Build & Release from GitHub"
+            -F "gameVersions=$HYTALE_VERSION" \
+            -F "changelog=<release_notes.md"
