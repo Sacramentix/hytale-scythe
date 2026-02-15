@@ -8,8 +8,7 @@ import com.hypixel.hytale.builtin.adventure.farming.FarmingUtil;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
-import com.hypixel.hytale.component.CommandBuffer;
-import com.hypixel.hytale.component.Ref;
+import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.math.util.ChunkUtil;
 import com.hypixel.hytale.math.vector.Vector3i;
@@ -18,14 +17,12 @@ import com.hypixel.hytale.protocol.WaitForDataFrom;
 import com.hypixel.hytale.server.core.entity.InteractionContext;
 import com.hypixel.hytale.server.core.modules.entity.component.HeadRotation;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
+import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
+import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntityStatTypes;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.CooldownHandler;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.SimpleInstantInteraction;
-import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.chunk.BlockChunk;
 import com.hypixel.hytale.server.core.universe.world.chunk.WorldChunk;
-import com.hypixel.hytale.server.core.universe.world.chunk.section.BlockSection;
-import com.hypixel.hytale.server.core.universe.world.storage.ChunkStore;
-import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 
 public class RadialHarvest extends SimpleInstantInteraction {
 
@@ -58,84 +55,81 @@ public class RadialHarvest extends SimpleInstantInteraction {
    protected void firstRun(
       @Nonnull InteractionType type, @Nonnull InteractionContext ctx, @Nonnull CooldownHandler cooldownHandler
    ) {
+
       
-      Ref<EntityStore> player = ctx.getEntity();
-
-      CommandBuffer<EntityStore> commandBuffer = ctx.getCommandBuffer();
-
+      var player = ctx.getEntity();
+      
+      var commandBuffer = ctx.getCommandBuffer();
+      
       assert commandBuffer != null;
+      
+      var world = commandBuffer.getExternalData().getWorld();
 
-      World world = commandBuffer.getExternalData().getWorld();
+      var store = commandBuffer.getStore();
 
-      var transform = commandBuffer.getStore().getComponent(player, TransformComponent.getComponentType());
+      var transform = store.getComponent(player, TransformComponent.getComponentType());
       var position = transform.getPosition();
-      var headRotation = commandBuffer.getStore().getComponent(player, HeadRotation.getComponentType());
+      var headRotation = store.getComponent(player, HeadRotation.getComponentType());
       var blocksToHarvest = new ArrayList<Vector3i>();
 
-      // LOGGER.atInfo().log("RadialHarvest | \n x: "+position.x+" y: "+position.y+" z: "+position.z+" \n rotation: yaw: " + headRotation.getRotation().getYaw());
-      // LOGGER.atInfo().log("HOT RELOAD BIS!");
       // Cylinder parameters
-      double reach = this.reach.doubleValue();
-      double reachSq = reach * reach;
-      double fov = 150.0;
-      double minDot = Math.cos(Math.toRadians(fov / 2.0));
+      var reach = this.reach.doubleValue();
+      var reachSq = reach * reach;
+      var fov = 150.0;
+      var minDot = Math.cos(Math.toRadians(fov / 2.0));
 
-      // Player orientation (Yaw 0 = +Z usually, rotating clockwise or counter-clockwise)
-      // Assuming standard mapping: dx = -sin(yaw), dz = cos(yaw)
-      double yawRad = headRotation.getRotation().getYaw();
-      double lookX = -Math.sin(yawRad); 
-      double lookZ = -Math.cos(yawRad);
+      var yawRad = headRotation.getRotation().getYaw();
+      var lookX = -Math.sin(yawRad); 
+      var lookZ = -Math.cos(yawRad);
 
-      int minX = (int) Math.floor(position.x - reach);
-      int maxX = (int) Math.ceil(position.x + reach);
-      int minZ = (int) Math.floor(position.z - reach);
-      int maxZ = (int) Math.ceil(position.z + reach);
-      int midY = (int) Math.floor(position.y);
+      var minX = (int) Math.floor(position.x - reach);
+      var maxX = (int) Math.ceil(position.x + reach);
+      var minZ = (int) Math.floor(position.z - reach);
+      var maxZ = (int) Math.ceil(position.z + reach);
+      var midY = (int) Math.floor(position.y);
 
       // 1. Spatial Filter: Bounding Box
-      for (int x = minX; x <= maxX; x++) {
-         for (int z = minZ; z <= maxZ; z++) {
-            double blockCenterX = x + 0.5;
-            double blockCenterZ = z + 0.5;
+      for (var x = minX; x <= maxX; x++) {
+         for (var z = minZ; z <= maxZ; z++) {
+            var blockCenterX = x + 0.5;
+            var blockCenterZ = z + 0.5;
             
-            double dx = blockCenterX - position.x;
-            double dz = blockCenterZ - position.z;
-            double distSq = dx * dx + dz * dz;
+            var dx = blockCenterX - position.x;
+            var dz = blockCenterZ - position.z;
+            var distSq = dx * dx + dz * dz;
 
             // 2. Distance Filter (Cylinder Radius)
             if (distSq > reachSq) continue;
 
             // 3. Angle Filter (Cone/Slice)
-            double dist = Math.sqrt(distSq);
+            var dist = Math.sqrt(distSq);
             if (dist > 1e-4) {
                // Dot product to find angle cosine
-               double dot = (lookX * dx + lookZ * dz) / dist;
+               var dot = (lookX * dx + lookZ * dz) / dist;
                if (dot < minDot) continue; // Outside FOV
             }
 
             // Add blocks within vertical reach (e.g., feet and head level)
+            blocksToHarvest.add(new Vector3i(x, midY - 1, z));
             blocksToHarvest.add(new Vector3i(x, midY, z));
             blocksToHarvest.add(new Vector3i(x, midY + 1, z));
          }
       }
 
-      
-      
-      // LOGGER.atInfo().log("RadialHarvest | " + blocksToHarvest);
+      var crop_harvested_amount = 0.0f;
 
-
-      for (Vector3i targetBlock : blocksToHarvest) {
-         ChunkStore chunkStore = world.getChunkStore();
-         long chunkIndex = ChunkUtil.indexChunkFromBlock(targetBlock.x, targetBlock.z);
-         Ref<ChunkStore> chunkRef = chunkStore.getChunkReference(chunkIndex);
+      for (var targetBlock : blocksToHarvest) {
+         var chunkStore = world.getChunkStore();
+         var chunkIndex = ChunkUtil.indexChunkFromBlock(targetBlock.x, targetBlock.z);
+         var chunkRef = chunkStore.getChunkReference(chunkIndex);
          
          if (chunkRef == null || !chunkRef.isValid()) continue;
-         BlockChunk blockChunk = chunkStore.getStore().getComponent(chunkRef, BlockChunk.getComponentType());
+         var blockChunk = chunkStore.getStore().getComponent(chunkRef, BlockChunk.getComponentType());
          if (blockChunk == null) continue;
 
-         BlockSection blockSection = blockChunk.getSectionAtBlockY(targetBlock.y);
+         var blockSection = blockChunk.getSectionAtBlockY(targetBlock.y);
          if (blockSection == null) continue;
-         WorldChunk worldChunkComponent = chunkStore.getStore().getComponent(chunkRef, WorldChunk.getComponentType());
+         var worldChunkComponent = chunkStore.getStore().getComponent(chunkRef, WorldChunk.getComponentType());
          if (worldChunkComponent == null) continue;
          var blockType = worldChunkComponent.getBlockType(targetBlock);
          if (blockType == null) continue;
@@ -148,10 +142,29 @@ public class RadialHarvest extends SimpleInstantInteraction {
 
          // LOGGER.atInfo().log(blockType.toString());
          if (blockType.getGathering().getHarvest() == null) continue;
-         int rotationIndex = blockSection.getRotationIndex(targetBlock.x, targetBlock.y, targetBlock.z);
+         var rotationIndex = blockSection.getRotationIndex(targetBlock.x, targetBlock.y, targetBlock.z);
          FarmingUtil.harvest(world, commandBuffer, player, blockType, rotationIndex, targetBlock);
+         crop_harvested_amount++;
       }
 
+      // Decrease item durability for each crop harvested
+      var item = ctx.getHeldItem();
+      var container = ctx.getHeldItemContainer();
+      if (item != null && container != null && crop_harvested_amount > 0 && item.getMaxDurability() > 0) {
+         // Reduce durability by 0.01 per crop
+         var newDurability = item.getDurability() - (crop_harvested_amount * 0.01);
+         if (newDurability < 0) newDurability = 0;
+         
+         container.setItemStackForSlot((short) ctx.getHeldItemSlot(), item.withDurability(newDurability));
+      }
+
+      // Increase signature energy for each crop harvested
+      var signatureEnergyIndex = DefaultEntityStatTypes.getSignatureEnergy();
+		var statMap = store.getComponent(player, EntityStatMap.getComponentType());
+
+		statMap.addStatValue(signatureEnergyIndex, crop_harvested_amount);
+		statMap.update();
+      
    }
 
 
