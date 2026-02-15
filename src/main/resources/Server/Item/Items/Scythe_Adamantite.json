@@ -4,9 +4,6 @@
     "Name": "items.Tool_Scythe_Adamantite.name",
     "Description": "items.Tool_Scythe.description"
   },
-  "Categories": [
-    "Items.Tools"
-  ],
   "Set": "Tool_Iron",
   "Quality": "Rare",
   "MaxStack": 1,
@@ -35,7 +32,6 @@
     ]
   },
   "MaxDurability": 800,
-  "PlayerAnimationsId": "Battleaxe",
   "Model": "Items/Tools/Scythe/Adamantite.blockymodel",
   "Texture": "Items/Tools/Scythe/Adamantite_Texture.png",
   "IconProperties": {
@@ -66,6 +62,14 @@
         {
           "Type": "Radial_Harvest",
           "Reach": 9.5
+        }
+      ]
+    },
+    "Launch_Harvest_Wind": {
+      "Interactions": [
+        {
+          "Type": "Launch_Harvest_Wind",
+          "Reach": 5.0
         }
       ]
     }

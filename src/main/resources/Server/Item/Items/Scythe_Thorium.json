@@ -4,9 +4,6 @@
     "Name": "items.Tool_Scythe_Thorium.name",
     "Description": "items.Tool_Scythe.description"
   },
-  "Categories": [
-    "Items.Tools"
-  ],
   "Set": "Tool_Iron",
   "Quality": "Rare",
   "MaxStack": 1,
@@ -35,7 +32,6 @@
     ]
   },
   "MaxDurability": 200,
-  "PlayerAnimationsId": "Battleaxe",
   "Model": "Items/Tools/Scythe/Thorium.blockymodel",
   "Texture": "Items/Tools/Scythe/Thorium_Texture.png",
   "IconProperties": {
@@ -66,6 +62,14 @@
         {
           "Type": "Radial_Harvest",
           "Reach": 6.5
+        }
+      ]
+    },
+    "Launch_Harvest_Wind": {
+      "Interactions": [
+        {
+          "Type": "Launch_Harvest_Wind",
+          "Reach": 3.0
         }
       ]
     }
