@@ -49,15 +49,17 @@ public class TillAndSowCommand extends AbstractPlayerCommand {
         var transform = player.getTransform();
         var position = transform.getPosition();
 
+        // Create a cylinder center on the player
         var x = position.x;
         var y = position.y;
         var z = position.z;
 
-        var radius = 25;
+        var radius = 100;
         var heightBelow = 3;
         var heightAbove = 3;
         var radiusSq = radius * radius;
 
+        // Define the bounding box of the cylinder
         var minX = (int) Math.floor(x - radius);
         var maxX = (int) Math.ceil( x + radius);
         var minZ = (int) Math.floor(z - radius);
@@ -73,52 +75,55 @@ public class TillAndSowCommand extends AbstractPlayerCommand {
         
         var farmlandIntId   = assetMap.getIndex(FARMLAND_ID);
         var wheatIntId      = assetMap.getIndex(WHEAT_ID);
-
+        
         for (var xx = minX; xx <= maxX; xx++) {
             for (var zz = minZ; zz <= maxZ; zz++) {
                 var blockCenterX = xx + 0.5;
                 var blockCenterZ = zz + 0.5;
                 var dx = blockCenterX - position.x;
                 var dz = blockCenterZ - position.z;
+                // check if a X Z position is inside the circle around player
                 var distSq = dx * dx + dz * dz;
-
                 if (distSq > radiusSq) continue;
 
+
+                // If so process a column Y of block from top to bottom
                 for (int yy = maxY; yy >= minY; yy--) {
                     processBlock(world, xx, yy, zz, farmlandType, farmlandIntId, wheatType, wheatIntId, context);
                 }
             }
         }
         
-        context.sendMessage(Message.raw("Finished processing."));
+        context.sendMessage(Message.raw("/tillandsow completed!"));
     }
 
     private void processBlock(World world, int x, int y, int z, BlockType farmlandType, int farmlandIntId, BlockType wheatType, int wheatIntId, CommandContext ctx) {
-        ChunkStore chunkStore = world.getChunkStore();
-        long chunkIndex = ChunkUtil.indexChunkFromBlock(x, z);
-        Ref<ChunkStore> chunkRef = chunkStore.getChunkReference(chunkIndex);
+        var chunkStore = world.getChunkStore();
+        var chunkIndex = ChunkUtil.indexChunkFromBlock(x, z);
+        var chunkRef = chunkStore.getChunkReference(chunkIndex);
 
         if (chunkRef == null || !chunkRef.isValid()) return;
 
-        WorldChunk worldChunk = chunkStore.getStore().getComponent(chunkRef, WorldChunk.getComponentType());
+        var worldChunk = chunkStore.getStore().getComponent(chunkRef, WorldChunk.getComponentType());
         if (worldChunk == null) return;
 
         
-        BlockType currentBlock = worldChunk.getBlockType(x, y, z);
+        var currentBlock = worldChunk.getBlockType(x, y, z);
         if (currentBlock == null) return;
         
-        String currentId = currentBlock.getId();
+        var currentId = currentBlock.getId();
         
-        boolean isGrass = currentId.contains("Soil"); 
-        boolean isFarmland = currentId.contains("Farmland");
-        boolean isDefaultBlock = currentId.contains("Rock_Chalk_Brick_Decorative");
+        var isGrass = currentId.contains("Soil"); 
+        var isFarmland = currentId.contains("Farmland");
+        // default block in flat debug server world
+        var isDefaultBlock = currentId.contains("Rock_Chalk_Brick_Decorative");
 
         if (!isGrass && !isFarmland && !isDefaultBlock) return;
 
         
-        BlockType aboveBlock = worldChunk.getBlockType(x, y + 1, z);
-        boolean aboveIsAir = aboveBlock == null || aboveBlock.getId().equals("Empty"); 
-        boolean aboveIsCrop = aboveBlock != null && aboveBlock.getId().contains("Plant_Crop");
+        var aboveBlock = worldChunk.getBlockType(x, y + 1, z);
+        var aboveIsAir = aboveBlock == null || aboveBlock.getId().equals("Empty"); 
+        var aboveIsCrop = aboveBlock != null && aboveBlock.getId().contains("Plant_Crop");
 
         
         if (!aboveIsAir && !aboveIsCrop && aboveBlock != null) return;
@@ -134,12 +139,10 @@ public class TillAndSowCommand extends AbstractPlayerCommand {
 
         worldChunk.setBlock(x, y+1, z, wheatIntId, wheatType, 0, 0, 0);
         var farm = wheatType.getFarming().getStages();
-        LOGGER.atInfo().log(farm.toString());
-        BlockComponentChunk blockComponentChunk = chunkStore.getStore().getComponent(chunkRef, BlockComponentChunk.getComponentType());
-        int blockIndexColumn = ChunkUtil.indexBlockInColumn(x, y+1, z);
-        Ref<ChunkStore> blockRef = blockComponentChunk.getEntityReference(blockIndexColumn);
+        var blockComponentChunk = chunkStore.getStore().getComponent(chunkRef, BlockComponentChunk.getComponentType());
+        var blockIndexColumn = ChunkUtil.indexBlockInColumn(x, y+1, z);
+        var blockRef = blockComponentChunk.getEntityReference(blockIndexColumn);
         if (blockRef == null) {
-            LOGGER.atInfo().log("[ChangeFarmingStage] Creating new block entity (harvest0 pattern)");
             var blockEntity = ChunkStore.REGISTRY.newHolder();
             blockEntity.putComponent(BlockModule.BlockStateInfo.getComponentType(), new BlockModule.BlockStateInfo(blockIndexColumn, chunkRef));
             // blockEntity.addComponent(FarmingBlock.getComponentType(), farmingBlock);
@@ -154,10 +157,10 @@ public class TillAndSowCommand extends AbstractPlayerCommand {
         farmingBlock.setGeneration(farmingBlock.getGeneration() + 1);
         farmingBlock.setLastTickGameTime(now);
         worldChunk.setTicking(x, y+1, z, true);
-        Ref<ChunkStore> sectionRef = world.getChunkStore()
+        var sectionRef = world.getChunkStore()
             .getChunkSectionReference(ChunkUtil.chunkCoordinate(x), ChunkUtil.chunkCoordinate(y), ChunkUtil.chunkCoordinate(z));
         if (sectionRef != null) {
-            BlockSection section = chunkStore.getStore().getComponent(sectionRef, BlockSection.getComponentType());
+            var section = chunkStore.getStore().getComponent(sectionRef, BlockSection.getComponentType());
             if (section != null) {
                 section.scheduleTick(ChunkUtil.indexBlock(x, y+1, z), now);
             }
@@ -165,7 +168,7 @@ public class TillAndSowCommand extends AbstractPlayerCommand {
             // stages[stageIndex].apply(chunkStore, sectionRef, blockRef, x, y, z, previousStage);
             // LOGGER.atInfo().log("[ChangeFarmingStage] Applied stage %d via stages[%d].apply()", stageIndex, stageIndex);
         } else {
-            LOGGER.atWarning().log("[ChangeFarmingStage] sectionRef was null - could not apply stage!");
+            // LOGGER.atWarning().log("[ChangeFarmingStage] sectionRef was null - could not apply stage!");
         }
         worldChunk.markNeedsSaving();
 
