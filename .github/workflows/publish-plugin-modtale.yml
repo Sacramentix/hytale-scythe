@@ -40,7 +40,7 @@ jobs:
         with:
           version: 'tags/${{ github.event.inputs.release_tag }}'
           file: 'hytaleServer.version'
-          target: 'build/generated/'
+          target: 'build/generated/hytaleServer.version'
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload to Modtale
@@ -83,8 +83,8 @@ jobs:
           echo "-----------------------------"
 
           # 2. Find the downloaded jar
-          # Exclude plain jars
-          JAR_PATH=$(find build/libs -name "*-plain.jar" -prune -o -name "*.jar" -print | head -n 1)
+          # Exclude plain, sources, and javadoc jars
+          JAR_PATH=$(find build/libs \( -name "*-plain.jar" -o -name "*-sources.jar" -o -name "*-javadoc.jar" \) -prune -o -name "*.jar" -print | head -n 1)
           
           if [ -z "$JAR_PATH" ]; then
             echo "Error: No suitable JAR file found in build/libs!"

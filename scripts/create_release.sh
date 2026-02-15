@@ -35,14 +35,22 @@ echo "--- Preview Notes ---"
 cat release_notes.md
 echo "---------------------"
 
-# Find JAR (excluding -plain.jar since that's usually the one without dependencie/sources)
-JAR_PATH=$(find build/libs -name "*-plain.jar" -prune -o -name "*.jar" -print | head -n 1)
+# Find JAR (excluding -plain.jar, -sources.jar, -javadoc.jar)
+JAR_PATH=$(find build/libs \( -name "*-plain.jar" -o -name "*-sources.jar" -o -name "*-javadoc.jar" \) -prune -o -name "*.jar" -print | head -n 1)
 
 if [ -z "$JAR_PATH" ]; then
     echo "Error: Could not find built jar in build/libs"
     exit 1
 fi
 echo "Found JAR: $JAR_PATH"
+
+# Find Sources JAR
+SOURCES_JAR_PATH=$(find build/libs -name "*-sources.jar" -print | head -n 1)
+if [ -n "$SOURCES_JAR_PATH" ]; then
+    echo "Found Sources JAR: $SOURCES_JAR_PATH"
+else
+    echo "Warning: No sources JAR found."
+fi
 
 # Ask for confirmation
 read -p "Create GitHub release for $VERSION? (y/N) " confirm
@@ -54,8 +62,13 @@ fi
 
 echo "Creating release..."
 # Create the release. This triggers 'release: types: [published]' workflow.
-# Upload both the JAR and the hytaleServer.version file as assets
-gh release create "$VERSION" "$JAR_PATH" "build/generated/hytaleServer.version" \
+# Upload JAR, Sources JAR (if exists), and the hytaleServer.version file as assets
+FILES_TO_UPLOAD="$JAR_PATH build/generated/hytaleServer.version"
+if [ -n "$SOURCES_JAR_PATH" ]; then
+    FILES_TO_UPLOAD="$FILES_TO_UPLOAD $SOURCES_JAR_PATH"
+fi
+
+gh release create "$VERSION" $FILES_TO_UPLOAD \
     --title "$VERSION" \
     --notes-file release_notes.md
 
