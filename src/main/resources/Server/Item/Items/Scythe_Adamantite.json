@@ -16,8 +16,8 @@
         "Quantity": 4
       },
       {
-        "ResourceTypeId": "Ingredient_Bar_Adamantite",
-        "Quantity": 5
+        "Quantity": 5,
+        "ItemId": "Ingredient_Bar_Adamantite"
       }
     ],
     "BenchRequirement": [
